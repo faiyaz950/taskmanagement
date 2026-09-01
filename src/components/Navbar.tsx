@@ -3,6 +3,7 @@ import { LogOut } from "lucide-react";
 import { auth } from "@/auth";
 import { logoutAction } from "@/lib/actions";
 import NavLinks from "@/components/NavLinks";
+import Logo from "@/components/Logo";
 
 export default async function Navbar() {
   const session = await auth();
@@ -22,12 +23,7 @@ export default async function Navbar() {
     <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--card)]/80 backdrop-blur-lg">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link href="/dashboard" className="flex shrink-0 items-center gap-2.5">
-          <span
-            className="logo-mark flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white shadow-[var(--shadow-glow)]"
-            style={{ background: "linear-gradient(135deg, var(--primary), var(--accent))" }}
-          >
-            T
-          </span>
+          <Logo size={32} className="logo-mark shadow-[var(--shadow-glow)] rounded-lg" />
           <span className="text-[15px] font-semibold tracking-tight">TaskFlow</span>
         </Link>
 

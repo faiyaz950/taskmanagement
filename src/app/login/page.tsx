@@ -1,8 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
-import { CheckCircle2, ListChecks, Users2 } from "lucide-react";
+import { Check, CheckCircle2, ListChecks, Users2 } from "lucide-react";
 import { loginAction } from "@/lib/actions";
+import Logo from "@/components/Logo";
 
 export default function LoginPage() {
   const [error, formAction, isPending] = useActionState(loginAction, undefined);
@@ -23,8 +24,8 @@ export default function LoginPage() {
         />
 
         <div className="relative flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 text-base font-bold backdrop-blur">
-            T
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 backdrop-blur">
+            <Check size={18} strokeWidth={3} />
           </span>
           <span className="text-lg font-semibold tracking-tight">TaskFlow</span>
         </div>
@@ -56,12 +57,7 @@ export default function LoginPage() {
       <div className="flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-sm animate-fade-up">
           <div className="mb-8 text-center lg:text-left">
-            <span
-              className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg text-lg font-bold text-white lg:hidden"
-              style={{ background: "linear-gradient(135deg, var(--primary), var(--accent))" }}
-            >
-              T
-            </span>
+            <Logo size={40} className="mb-4 inline-flex lg:hidden" />
             <h2 className="text-xl font-semibold tracking-tight">Welcome back</h2>
             <p className="mt-1 text-sm text-[var(--muted)]">Apne account me login karein</p>
           </div>

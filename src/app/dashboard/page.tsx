@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ListChecks, Clock3, Loader, CheckCircle2, AlertTriangle, Plus } from "lucide-react";
 import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { getDb } from "@/lib/prisma";
 import TaskList from "@/components/TaskList";
 import StatCard from "@/components/StatCard";
 
@@ -11,7 +11,7 @@ export default async function DashboardPage() {
 
   const isAdmin = session.user.role === "ADMIN";
 
-  const tasks = await prisma.task.findMany({
+  const tasks = await getDb().task.findMany({
     where: isAdmin ? {} : { assignedToId: session.user.id },
     include: { assignedTo: { select: { name: true } } },
     orderBy: { dueDate: "asc" },

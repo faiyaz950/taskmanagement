@@ -2,14 +2,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { getDb } from "@/lib/prisma";
 import NewTaskForm from "@/components/NewTaskForm";
 
 export default async function NewTaskPage() {
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") redirect("/dashboard");
 
-  const employees = await prisma.user.findMany({
+  const employees = await getDb().user.findMany({
     where: { role: "EMPLOYEE" },
     select: { id: true, name: true },
     orderBy: { name: "asc" },

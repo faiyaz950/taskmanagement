@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { Users2 } from "lucide-react";
 import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { getDb } from "@/lib/prisma";
 import NewEmployeeForm from "@/components/NewEmployeeForm";
 import TaskList from "@/components/TaskList";
 
@@ -18,7 +18,7 @@ export default async function EmployeesPage() {
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") redirect("/dashboard");
 
-  const employees = await prisma.user.findMany({
+  const employees = await getDb().user.findMany({
     where: { role: "EMPLOYEE" },
     include: {
       tasksAssignedToMe: {

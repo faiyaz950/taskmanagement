@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { ArrowLeft, MessageSquare } from "lucide-react";
 import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { getDb } from "@/lib/prisma";
 import { DueBadge, PriorityBadge, StatusBadge } from "@/components/Badges";
 import { formatDate } from "@/lib/utils";
 import StatusControl from "@/components/StatusControl";
@@ -22,7 +22,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const task = await prisma.task.findUnique({
+  const task = await getDb().task.findUnique({
     where: { id },
     include: {
       assignedTo: { select: { id: true, name: true, email: true } },

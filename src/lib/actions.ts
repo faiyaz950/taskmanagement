@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { auth, signIn, signOut } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { getDb } from "@/lib/prisma";
 import { AuthError } from "next-auth";
 
 async function requireAdmin() {
@@ -51,13 +51,14 @@ export async function createEmployeeAction(_prevState: string | undefined, formD
     return "Password kam se kam 6 characters ka hona chahiye.";
   }
 
-  const existing = await prisma.user.findUnique({ where: { email } });
+  const db = getDb();
+  const existing = await db.user.findUnique({ where: { email } });
   if (existing) {
     return "Is email se pehle se account bana hua hai.";
   }
 
   const hashed = await bcrypt.hash(password, 10);
-  await prisma.user.create({
+  await db.user.create({
     data: { name, email, password: hashed, role: "EMPLOYEE" },
   });
 
@@ -84,7 +85,7 @@ export async function createTaskAction(_prevState: string | undefined, formData:
 
   const session = await auth();
 
-  await prisma.task.create({
+  await getDb().task.create({
     data: {
       title,
       description,
@@ -104,22 +105,23 @@ export async function updateTaskStatusAction(taskId: string, status: "PENDING" |
   const session = await auth();
   if (!session?.user) throw new Error("Login zaroori hai.");
 
-  const task = await prisma.task.findUnique({ where: { id: taskId } });
+  const db = getDb();
+  const task = await db.task.findUnique({ where: { id: taskId } });
   if (!task) throw new Error("Task nahi mila.");
 
   const isOwner = task.assignedToId === session.user.id;
   const isAdmin = session.user.role === "ADMIN";
   if (!isOwner && !isAdmin) throw new Error("Aapko yeh task update karne ki permission nahi hai.");
 
-  await prisma.$transaction([
-    prisma.task.update({
+  await db.$transaction([
+    db.task.update({
       where: { id: taskId },
       data: {
         status,
         completedAt: status === "COMPLETED" ? new Date() : null,
       },
     }),
-    prisma.taskUpdate.create({
+    db.taskUpdate.create({
       data: {
         taskId,
         authorId: session.user.id,
@@ -141,14 +143,15 @@ export async function addTaskUpdateAction(_prevState: string | undefined, formDa
 
   if (!message) return "Update likhna zaroori hai.";
 
-  const task = await prisma.task.findUnique({ where: { id: taskId } });
+  const db = getDb();
+  const task = await db.task.findUnique({ where: { id: taskId } });
   if (!task) return "Task nahi mila.";
 
   const isOwner = task.assignedToId === session.user.id;
   const isAdmin = session.user.role === "ADMIN";
   if (!isOwner && !isAdmin) return "Aapko yeh task update karne ki permission nahi hai.";
 
-  await prisma.taskUpdate.create({
+  await db.taskUpdate.create({
     data: { taskId, authorId: session.user.id, message },
   });
 

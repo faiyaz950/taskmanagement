@@ -4,7 +4,7 @@ import { ArrowLeft, MessageSquare, Pencil } from "lucide-react";
 import { auth } from "@/auth";
 import { getDb } from "@/lib/prisma";
 import { DueBadge, PriorityBadge, StatusBadge } from "@/components/Badges";
-import { formatDate } from "@/lib/utils";
+import { durationLabel, formatDate } from "@/lib/utils";
 import StatusControl from "@/components/StatusControl";
 import AddUpdateForm from "@/components/AddUpdateForm";
 import PageShell from "@/components/PageShell";
@@ -110,7 +110,12 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         <aside className="space-y-6 lg:sticky lg:top-24">
           <div className="card p-5">
             <p className="field-label">Update status</p>
-            <StatusControl taskId={task.id} currentStatus={task.status} />
+            <StatusControl
+              taskId={task.id}
+              currentStatus={task.status}
+              estimatedDays={task.estimatedDays}
+              hasStarted={Boolean(task.startedAt)}
+            />
           </div>
 
           <div className="card divide-y divide-[var(--border)] p-5 text-sm">
@@ -123,14 +128,20 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
               <p className="mt-0.5 font-medium">{task.assignedBy.name}</p>
             </div>
             <div className="py-3">
-              <p className="text-xs text-[var(--muted)]">Estimate</p>
+              <p className="text-xs text-[var(--muted)]">Time allowed</p>
+              <p className="mt-0.5 font-medium">{durationLabel(task.estimatedDays)}</p>
+            </div>
+            <div className="py-3">
+              <p className="text-xs text-[var(--muted)]">Started on</p>
               <p className="mt-0.5 font-medium">
-                {task.estimatedDays} day{task.estimatedDays === 1 ? "" : "s"}
+                {task.startedAt ? formatDate(task.startedAt) : "Not started yet"}
               </p>
             </div>
             <div className="pt-3">
-              <p className="text-xs text-[var(--muted)]">Due date</p>
-              <p className="mt-0.5 font-medium">{formatDate(task.dueDate)}</p>
+              <p className="text-xs text-[var(--muted)]">Deadline</p>
+              <p className="mt-0.5 font-medium">
+                {task.dueDate ? formatDate(task.dueDate) : "Set when the task starts"}
+              </p>
             </div>
           </div>
         </aside>

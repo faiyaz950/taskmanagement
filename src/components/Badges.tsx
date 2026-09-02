@@ -18,6 +18,7 @@ const DUE_TONE: Record<string, string> = {
   soon: "warning",
   ok: "muted",
   done: "success",
+  idle: "muted",
 };
 
 function toneStyle(tone: string) {
@@ -54,7 +55,13 @@ export function PriorityBadge({ priority }: { priority: string }) {
   );
 }
 
-export function DueBadge({ dueDate, status }: { dueDate: Date | string; status: string }) {
+export function DueBadge({
+  dueDate,
+  status,
+}: {
+  dueDate: Date | string | null | undefined;
+  status: string;
+}) {
   const { text, tone } = dueLabel(dueDate, status);
   return (
     <span className="badge" style={toneStyle(DUE_TONE[tone])}>

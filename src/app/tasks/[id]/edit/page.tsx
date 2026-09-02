@@ -45,7 +45,8 @@ export default async function EditTaskPage({ params }: { params: Promise<{ id: s
           assignedToId: task.assignedToId,
           priority: task.priority,
           estimatedDays: task.estimatedDays,
-          dueDate: formatDateInput(task.dueDate),
+          dueDate: task.dueDate ? formatDateInput(task.dueDate) : "",
+          hasStarted: Boolean(task.startedAt),
         }}
       />
 

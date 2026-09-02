@@ -19,7 +19,7 @@ export default async function NewTaskPage() {
   return (
     <PageShell
       title="Assign New Task"
-      description="Set the employee, due date, and estimated time."
+      description="Pick the employee and how many days they get. The deadline starts when they do."
       width="narrow"
       actions={
         <Link href="/dashboard" className="btn btn-ghost">

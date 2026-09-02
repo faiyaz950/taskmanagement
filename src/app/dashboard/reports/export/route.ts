@@ -1,6 +1,13 @@
 import { auth } from "@/auth";
 import { getDb } from "@/lib/prisma";
-import { formatDate, formatDateInput, resolveReportRange, STATUS_LABEL, PRIORITY_LABEL } from "@/lib/utils";
+import {
+  formatDate,
+  formatDateInput,
+  reportPeriodFilter,
+  resolveReportRange,
+  STATUS_LABEL,
+  PRIORITY_LABEL,
+} from "@/lib/utils";
 
 function csvCell(value: string | number) {
   const text = String(value ?? "");
@@ -21,7 +28,7 @@ export async function GET(request: Request) {
   });
 
   const tasks = await getDb().task.findMany({
-    where: { dueDate: { gte: range.from, lte: range.to } },
+    where: reportPeriodFilter(range),
     include: {
       assignedTo: { select: { name: true, email: true } },
       assignedBy: { select: { name: true } },
@@ -36,8 +43,9 @@ export async function GET(request: Request) {
     "Assigned By",
     "Status",
     "Priority",
-    "Estimated Days",
-    "Due Date",
+    "Days Allowed",
+    "Started On",
+    "Deadline",
     "Completed On",
   ];
 
@@ -50,7 +58,8 @@ export async function GET(request: Request) {
       STATUS_LABEL[task.status] ?? task.status,
       PRIORITY_LABEL[task.priority] ?? task.priority,
       task.estimatedDays,
-      formatDate(task.dueDate),
+      task.startedAt ? formatDate(task.startedAt) : "",
+      task.dueDate ? formatDate(task.dueDate) : "",
       task.completedAt ? formatDate(task.completedAt) : "",
     ]
       .map(csvCell)

@@ -5,7 +5,12 @@ import { auth } from "@/auth";
 import { getDb } from "@/lib/prisma";
 import StatCard from "@/components/StatCard";
 import TaskList from "@/components/TaskList";
-import { formatDateInput, formatDateRangeLabel, resolveReportRange } from "@/lib/utils";
+import {
+  formatDateInput,
+  formatDateRangeLabel,
+  reportPeriodFilter,
+  resolveReportRange,
+} from "@/lib/utils";
 import PageShell from "@/components/PageShell";
 
 function initials(name: string) {
@@ -34,7 +39,7 @@ export default async function ReportsPage({
   ).toString();
 
   const tasks = await getDb().task.findMany({
-    where: { dueDate: { gte: range.from, lte: range.to } },
+    where: reportPeriodFilter(range),
     include: { assignedTo: { select: { id: true, name: true } } },
     orderBy: { dueDate: "asc" },
   });
@@ -42,7 +47,9 @@ export default async function ReportsPage({
   const now = new Date();
   const total = tasks.length;
   const completed = tasks.filter((t) => t.status === "COMPLETED").length;
-  const overdue = tasks.filter((t) => t.status !== "COMPLETED" && new Date(t.dueDate) < now).length;
+  const overdue = tasks.filter(
+    (t) => t.status !== "COMPLETED" && t.dueDate && new Date(t.dueDate) < now,
+  ).length;
   const completionRate = total === 0 ? 0 : Math.round((completed / total) * 100);
 
   const byEmployee = new Map<string, { name: string; total: number; completed: number }>();

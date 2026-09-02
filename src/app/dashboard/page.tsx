@@ -60,7 +60,8 @@ export default async function DashboardPage({
     pending: tasks.filter((t) => t.status === "PENDING").length,
     inProgress: tasks.filter((t) => t.status === "IN_PROGRESS").length,
     completed: tasks.filter((t) => t.status === "COMPLETED").length,
-    overdue: tasks.filter((t) => t.status !== "COMPLETED" && new Date(t.dueDate) < now).length,
+    overdue: tasks.filter((t) => t.status !== "COMPLETED" && t.dueDate && new Date(t.dueDate) < now)
+      .length,
   };
 
   return (

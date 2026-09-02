@@ -21,13 +21,30 @@ export function daysRemaining(dueDate: Date | string) {
   return Math.round(diffMs / (1000 * 60 * 60 * 24));
 }
 
-export function dueLabel(dueDate: Date | string, status: string) {
-  const days = daysRemaining(dueDate);
+/**
+ * The deadline an employee gets by starting a task now: the start day plus the
+ * duration the admin allotted. A 1-day task started today is due today, so the
+ * duration counts the start day itself.
+ */
+export function deadlineFromStart(startedAt: Date, estimatedDays: number) {
+  const start = new Date(utcMidnight(startedAt));
+  start.setUTCDate(start.getUTCDate() + Math.max(0, Math.ceil(estimatedDays) - 1));
+  return start;
+}
+
+export function dueLabel(dueDate: Date | string | null | undefined, status: string) {
   if (status === "COMPLETED") return { text: "Completed", tone: "done" as const };
+  if (!dueDate) return { text: "Not started", tone: "idle" as const };
+
+  const days = daysRemaining(dueDate);
   if (days < 0) return { text: `${Math.abs(days)} day${Math.abs(days) === 1 ? "" : "s"} overdue`, tone: "overdue" as const };
   if (days === 0) return { text: "Due today", tone: "soon" as const };
   if (days <= 2) return { text: `${days} day${days === 1 ? "" : "s"} left`, tone: "soon" as const };
   return { text: `${days} days left`, tone: "ok" as const };
+}
+
+export function durationLabel(days: number) {
+  return `${days} day${days === 1 ? "" : "s"}`;
 }
 
 export const STATUS_LABEL: Record<string, string> = {
@@ -89,6 +106,20 @@ export function resolveReportRange(params: { range?: string; from?: string; to?:
     return { range: getWeekRange(), preset: "week" };
   }
   return { range: getMonthRange(), preset: "month" };
+}
+
+/**
+ * Which tasks belong to a report period: those due in the range, plus those
+ * that have no deadline yet (never started) but were created in it — otherwise
+ * unstarted work would vanish from every report.
+ */
+export function reportPeriodFilter(range: DateRange) {
+  return {
+    OR: [
+      { dueDate: { gte: range.from, lte: range.to } },
+      { AND: [{ dueDate: null }, { createdAt: { gte: range.from, lte: range.to } }] },
+    ],
+  };
 }
 
 export function formatDateRangeLabel(range: DateRange) {

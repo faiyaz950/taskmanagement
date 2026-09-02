@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { ClipboardList, ChevronRight } from "lucide-react";
 import { DueBadge, PriorityBadge, StatusBadge } from "@/components/Badges";
-import { formatDate } from "@/lib/utils";
+import { durationLabel, formatDate } from "@/lib/utils";
 
 type TaskListItem = {
   id: string;
   title: string;
   status: string;
   priority: string;
-  dueDate: Date;
+  dueDate: Date | null;
   estimatedDays: number;
   assignedTo?: { name: string };
 };
@@ -85,9 +85,9 @@ export default function TaskList({
                 <p className="mt-1 text-xs text-[var(--muted)]">
                   <span className="lg:hidden">
                     {showAssignee && task.assignedTo ? `${task.assignedTo.name} · ` : ""}
-                    Due: {formatDate(task.dueDate)} ·{" "}
+                    {task.dueDate ? `Due: ${formatDate(task.dueDate)} · ` : ""}
                   </span>
-                  Estimate: {task.estimatedDays} day{task.estimatedDays === 1 ? "" : "s"}
+                  {durationLabel(task.estimatedDays)} allowed
                 </p>
               </div>
 
@@ -115,7 +115,9 @@ export default function TaskList({
               </div>
               <div className="hidden lg:block">
                 {task.status === "COMPLETED" ? (
-                  <span className="text-xs text-[var(--muted)]">{formatDate(task.dueDate)}</span>
+                  <span className="text-xs text-[var(--muted)]">
+                    {task.dueDate ? formatDate(task.dueDate) : "—"}
+                  </span>
                 ) : (
                   <DueBadge dueDate={task.dueDate} status={task.status} />
                 )}
@@ -125,7 +127,9 @@ export default function TaskList({
               <div className="flex flex-wrap items-center gap-2 lg:hidden">
                 <PriorityBadge priority={task.priority} />
                 <StatusBadge status={task.status} />
-                {task.status !== "COMPLETED" && <DueBadge dueDate={task.dueDate} status={task.status} />}
+                {task.status !== "COMPLETED" && (
+                  <DueBadge dueDate={task.dueDate} status={task.status} />
+                )}
               </div>
 
               <ChevronRight

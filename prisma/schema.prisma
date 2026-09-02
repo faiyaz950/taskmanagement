@@ -46,8 +46,12 @@ model Task {
   description    String
   status         TaskStatus @default(PENDING)
   priority       Priority   @default(MEDIUM)
+  // The admin allots a duration; the deadline is derived when the employee
+  // starts the task (startedAt + estimatedDays), so dueDate stays empty until
+  // then. An admin can still override dueDate afterwards.
   estimatedDays  Float
-  dueDate        DateTime
+  startedAt      DateTime?
+  dueDate        DateTime?
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
   completedAt    DateTime?

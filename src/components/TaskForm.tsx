@@ -11,7 +11,9 @@ type TaskFormValues = {
   assignedToId: string;
   priority: string;
   estimatedDays: number;
+  /** Empty until the employee starts the task. */
   dueDate: string;
+  hasStarted: boolean;
 };
 
 export default function TaskForm({
@@ -96,34 +98,43 @@ export default function TaskForm({
 
         <div>
           <label htmlFor="estimatedDays" className="field-label">
-            Estimated days
+            Days to complete
           </label>
           <input
             id="estimatedDays"
             name="estimatedDays"
             type="number"
-            min="0.5"
-            step="0.5"
+            min="1"
+            step="1"
             required
             defaultValue={task?.estimatedDays}
             className="input"
-            placeholder="e.g. 3"
+            placeholder="e.g. 2"
           />
+          <p className="mt-1.5 text-xs text-[var(--muted)]">
+            {task?.hasStarted
+              ? "Changing this recalculates the deadline from the start date."
+              : "The deadline is set automatically when the employee starts the task."}
+          </p>
         </div>
 
-        <div>
-          <label htmlFor="dueDate" className="field-label">
-            Due date
-          </label>
-          <input
-            id="dueDate"
-            name="dueDate"
-            type="date"
-            required
-            defaultValue={task?.dueDate}
-            className="input"
-          />
-        </div>
+        {task?.hasStarted && (
+          <div>
+            <label htmlFor="dueDate" className="field-label">
+              Deadline
+            </label>
+            <input
+              id="dueDate"
+              name="dueDate"
+              type="date"
+              defaultValue={task.dueDate}
+              className="input"
+            />
+            <p className="mt-1.5 text-xs text-[var(--muted)]">
+              Override the calculated deadline if you need to extend it.
+            </p>
+          </div>
+        )}
       </div>
 
       {error && (

@@ -19,7 +19,7 @@ export default function AddUpdateForm({ taskId }: { taskId: string }) {
         name="message"
         required
         rows={3}
-        placeholder="Progress update likhein... jaise: aaj 2 ghante kaam kiya, kal complete ho jayega"
+        placeholder="Write a progress update... e.g. worked on this for 2 hours today, will finish tomorrow"
         className="input resize-none"
       />
       {error && (
@@ -29,7 +29,7 @@ export default function AddUpdateForm({ taskId }: { taskId: string }) {
       )}
       <button type="submit" disabled={isPending} className="btn btn-primary">
         <Send size={14} />
-        {isPending ? "Bhej rahe hain..." : "Update Bhejein"}
+        {isPending ? "Posting..." : "Post Update"}
       </button>
     </form>
   );

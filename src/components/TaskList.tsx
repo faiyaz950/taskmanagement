@@ -44,7 +44,7 @@ export default function TaskList({
         >
           <ClipboardList size={20} strokeWidth={1.75} />
         </span>
-        <p className="text-sm text-[var(--muted)]">Koi task nahi mila.</p>
+        <p className="text-sm text-[var(--muted)]">No tasks found.</p>
       </div>
     );
   }
@@ -71,7 +71,7 @@ export default function TaskList({
                 <p className="truncate font-medium">{task.title}</p>
                 <p className="mt-1 text-xs text-[var(--muted)]">
                   {showAssignee && task.assignedTo ? `${task.assignedTo.name} · ` : ""}
-                  Deadline: {formatDate(task.dueDate)} · Estimate: {task.estimatedDays} din
+                  Due: {formatDate(task.dueDate)} · Estimate: {task.estimatedDays} day{task.estimatedDays === 1 ? "" : "s"}
                 </p>
               </div>
             </div>

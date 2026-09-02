@@ -36,12 +36,12 @@ export default async function DashboardPage() {
         <div className="relative flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-[28px]">
-              {isAdmin ? "Sabhi Tasks" : `Salam, ${session.user.name?.split(" ")[0]}`}
+              {isAdmin ? "All Tasks" : `Hi, ${session.user.name?.split(" ")[0]}`}
             </h1>
             <p className="mt-1 text-sm text-white/80">
               {isAdmin
-                ? "Apni team ko diye gaye tasks aur unka progress dekhein."
-                : "Aapko assign kiye gaye tasks aur unki deadline."}
+                ? "Track the tasks assigned to your team and their progress."
+                : "Your assigned tasks and their deadlines."}
             </p>
           </div>
           {isAdmin && (
@@ -50,7 +50,7 @@ export default async function DashboardPage() {
               className="btn shrink-0 bg-white text-[var(--primary)] shadow-lg hover:-translate-y-0.5 hover:shadow-xl"
             >
               <Plus size={16} />
-              Naya Task Assign Karein
+              Assign New Task
             </Link>
           )}
         </div>

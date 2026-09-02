@@ -18,17 +18,17 @@ export default async function NewTaskPage() {
   return (
     <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
       <Link href="/dashboard" className="link-nav mb-4 !px-0 inline-flex w-fit hover:!bg-transparent">
-        <ArrowLeft size={15} /> Dashboard par wapas
+        <ArrowLeft size={15} /> Back to Dashboard
       </Link>
 
-      <h1 className="mb-1 text-2xl font-semibold tracking-tight">Naya Task Assign Karein</h1>
-      <p className="mb-6 text-sm text-[var(--muted)]">Employee, deadline aur estimated time set karein.</p>
+      <h1 className="mb-1 text-2xl font-semibold tracking-tight">Assign New Task</h1>
+      <p className="mb-6 text-sm text-[var(--muted)]">Set the employee, due date, and estimated time.</p>
 
       {employees.length === 0 ? (
         <div className="card p-6 text-sm text-[var(--muted)]">
-          Pehle koi employee add karein.{" "}
+          Add an employee first.{" "}
           <Link href="/dashboard/employees" className="font-medium text-[var(--primary)] underline underline-offset-2">
-            Employees page par jayein
+            Go to the Employees page
           </Link>
           .
         </div>

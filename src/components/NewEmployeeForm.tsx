@@ -11,14 +11,14 @@ export default function NewEmployeeForm() {
     <form action={formAction} className="card space-y-4 p-6">
       <h2 className="flex items-center gap-2 font-medium">
         <UserPlus size={16} className="text-[var(--primary)]" />
-        Naya Employee Add Karein
+        Add New Employee
       </h2>
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
           <label htmlFor="name" className="field-label">
-            Naam
+            Name
           </label>
-          <input id="name" name="name" required className="input" placeholder="Employee ka naam" />
+          <input id="name" name="name" required className="input" placeholder="Employee's name" />
         </div>
         <div>
           <label htmlFor="email" className="field-label">
@@ -44,7 +44,7 @@ export default function NewEmployeeForm() {
             required
             minLength={6}
             className="input"
-            placeholder="Kam se kam 6 characters"
+            placeholder="At least 6 characters"
           />
         </div>
       </div>
@@ -57,10 +57,10 @@ export default function NewEmployeeForm() {
 
       <button type="submit" disabled={isPending} className="btn btn-primary">
         <UserPlus size={15} />
-        {isPending ? "Add ho raha hai..." : "Employee Add Karein"}
+        {isPending ? "Adding..." : "Add Employee"}
       </button>
       <p className="text-xs text-[var(--muted)]">
-        Yeh login details employee ko de dein taaki wo login karke apne tasks dekh sakein.
+        Share these login details with the employee so they can sign in and view their tasks.
       </p>
     </form>
   );

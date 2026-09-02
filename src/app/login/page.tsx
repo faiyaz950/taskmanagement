@@ -32,21 +32,21 @@ export default function LoginPage() {
 
         <div className="relative max-w-sm">
           <h1 className="text-3xl font-semibold leading-tight tracking-tight">
-            Apni team ke tasks, ek jagah par manage karein.
+            Manage your team&apos;s tasks, all in one place.
           </h1>
           <p className="mt-3 text-sm text-white/80">
-            Assign karein, deadline set karein, aur real-time progress dekhein — sab kuch ek simple dashboard me.
+            Assign work, set deadlines, and track real-time progress — all from one simple dashboard.
           </p>
 
           <ul className="mt-8 space-y-3 text-sm text-white/90">
             <li className="flex items-center gap-2.5">
-              <CheckCircle2 size={18} className="shrink-0 text-white/80" /> Deadline aur estimated time tracking
+              <CheckCircle2 size={18} className="shrink-0 text-white/80" /> Deadline and time-estimate tracking
             </li>
             <li className="flex items-center gap-2.5">
-              <Users2 size={18} className="shrink-0 text-white/80" /> Har employee ka apna login
+              <Users2 size={18} className="shrink-0 text-white/80" /> A personal login for every employee
             </li>
             <li className="flex items-center gap-2.5">
-              <ListChecks size={18} className="shrink-0 text-white/80" /> Progress updates aur history
+              <ListChecks size={18} className="shrink-0 text-white/80" /> Progress updates and history
             </li>
           </ul>
         </div>
@@ -59,7 +59,7 @@ export default function LoginPage() {
           <div className="mb-8 text-center lg:text-left">
             <Logo size={40} className="mb-4 inline-flex lg:hidden" />
             <h2 className="text-xl font-semibold tracking-tight">Welcome back</h2>
-            <p className="mt-1 text-sm text-[var(--muted)]">Apne account me login karein</p>
+            <p className="mt-1 text-sm text-[var(--muted)]">Sign in to your account</p>
           </div>
 
           <form action={formAction} className="space-y-4">
@@ -74,7 +74,7 @@ export default function LoginPage() {
                 required
                 autoComplete="email"
                 className="input"
-                placeholder="aap@company.com"
+                placeholder="you@company.com"
               />
             </div>
             <div>
@@ -99,12 +99,12 @@ export default function LoginPage() {
             )}
 
             <button type="submit" disabled={isPending} className="btn btn-primary w-full">
-              {isPending ? "Login ho raha hai..." : "Login"}
+              {isPending ? "Signing in..." : "Login"}
             </button>
           </form>
 
           <p className="mt-6 text-center text-xs text-[var(--muted)] lg:text-left">
-            Account nahi hai? Apne admin se account banwayein.
+            Don&apos;t have an account? Ask your admin to create one for you.
           </p>
         </div>
       </div>

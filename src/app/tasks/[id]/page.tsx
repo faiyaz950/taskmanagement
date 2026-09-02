@@ -43,7 +43,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
       <Link href="/dashboard" className="link-nav mb-4 !px-0 inline-flex w-fit hover:!bg-transparent">
-        <ArrowLeft size={15} /> Dashboard par wapas
+        <ArrowLeft size={15} /> Back to Dashboard
       </Link>
 
       <div className="card animate-fade-up mb-6 p-6 sm:p-7">
@@ -67,16 +67,16 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           </div>
           <div>
             <p className="text-xs text-[var(--muted)]">Estimate</p>
-            <p className="mt-0.5 font-medium">{task.estimatedDays} din</p>
+            <p className="mt-0.5 font-medium">{task.estimatedDays} day{task.estimatedDays === 1 ? "" : "s"}</p>
           </div>
           <div>
-            <p className="text-xs text-[var(--muted)]">Deadline</p>
+            <p className="text-xs text-[var(--muted)]">Due date</p>
             <p className="mt-0.5 font-medium">{formatDate(task.dueDate)}</p>
           </div>
         </div>
 
         <div className="mt-5 border-t border-[var(--border)] pt-5">
-          <p className="field-label">Status update karein</p>
+          <p className="field-label">Update status</p>
           <StatusControl taskId={task.id} currentStatus={task.status} />
         </div>
       </div>
@@ -91,7 +91,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         </div>
 
         {task.updates.length === 0 ? (
-          <p className="text-sm text-[var(--muted)]">Abhi tak koi update nahi hai.</p>
+          <p className="text-sm text-[var(--muted)]">No updates yet.</p>
         ) : (
           <ul className="space-y-5">
             {task.updates.map((update) => (

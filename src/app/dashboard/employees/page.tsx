@@ -32,7 +32,7 @@ export default async function EmployeesPage() {
     <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
       <h1 className="mb-1 text-2xl font-semibold tracking-tight">Employees</h1>
       <p className="mb-6 text-sm text-[var(--muted)]">
-        Team members manage karein jinhe aap task assign kar sakte hain.
+        Manage the team members you can assign tasks to.
       </p>
 
       <div className="mb-9">
@@ -47,7 +47,7 @@ export default async function EmployeesPage() {
           >
             <Users2 size={20} strokeWidth={1.75} />
           </span>
-          <p className="text-sm text-[var(--muted)]">Abhi koi employee add nahi hua hai.</p>
+          <p className="text-sm text-[var(--muted)]">No employees added yet.</p>
         </div>
       ) : (
         <div className="space-y-8">

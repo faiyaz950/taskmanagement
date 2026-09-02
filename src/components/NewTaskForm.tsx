@@ -11,14 +11,14 @@ export default function NewTaskForm({ employees }: { employees: { id: string; na
     <form action={formAction} className="card animate-fade-up space-y-5 p-6 sm:p-7">
       <div>
         <label htmlFor="title" className="field-label">
-          Task ka title
+          Task title
         </label>
         <input
           id="title"
           name="title"
           required
           className="input"
-          placeholder="Jaise: Homepage design update karein"
+          placeholder="e.g. Update the homepage design"
         />
       </div>
 
@@ -32,18 +32,18 @@ export default function NewTaskForm({ employees }: { employees: { id: string; na
           required
           rows={4}
           className="input resize-none"
-          placeholder="Task ki poori details likhein — kya karna hai, kaise karna hai"
+          placeholder="Describe what needs to be done and how"
         />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="assignedToId" className="field-label">
-            Kisko assign karein
+            Assign to
           </label>
           <select id="assignedToId" name="assignedToId" required defaultValue="" className="input">
             <option value="" disabled>
-              Employee chunein
+              Select an employee
             </option>
             {employees.map((emp) => (
               <option key={emp.id} value={emp.id}>
@@ -66,7 +66,7 @@ export default function NewTaskForm({ employees }: { employees: { id: string; na
 
         <div>
           <label htmlFor="estimatedDays" className="field-label">
-            Kitne din lagenge (estimate)
+            Estimated days
           </label>
           <input
             id="estimatedDays"
@@ -76,13 +76,13 @@ export default function NewTaskForm({ employees }: { employees: { id: string; na
             step="0.5"
             required
             className="input"
-            placeholder="Jaise: 3"
+            placeholder="e.g. 3"
           />
         </div>
 
         <div>
           <label htmlFor="dueDate" className="field-label">
-            Deadline (kis din tak complete ho)
+            Due date
           </label>
           <input id="dueDate" name="dueDate" type="date" required className="input" />
         </div>
@@ -96,7 +96,7 @@ export default function NewTaskForm({ employees }: { employees: { id: string; na
 
       <button type="submit" disabled={isPending} className="btn btn-primary">
         <Send size={15} />
-        {isPending ? "Assign ho raha hai..." : "Task Assign Karein"}
+        {isPending ? "Assigning..." : "Assign Task"}
       </button>
     </form>
   );

@@ -6,6 +6,7 @@ import { getDb } from "@/lib/prisma";
 import StatCard from "@/components/StatCard";
 import TaskList from "@/components/TaskList";
 import { formatDateInput, formatDateRangeLabel, resolveReportRange } from "@/lib/utils";
+import PageShell from "@/components/PageShell";
 
 function initials(name: string) {
   return name
@@ -54,21 +55,17 @@ export default async function ReportsPage({
   const employeeRows = Array.from(byEmployee.values()).sort((a, b) => b.total - a.total);
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
-      <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Reports</h1>
-          <p className="mt-1 text-sm text-[var(--muted)]">
-            Task activity for {formatDateRangeLabel(range)}.
-          </p>
-        </div>
+    <PageShell
+      title="Reports"
+      description={`Task activity for ${formatDateRangeLabel(range)}.`}
+      actions={
         <a href={`/dashboard/reports/export?${exportQuery}`} className="btn btn-secondary">
           <Download size={15} />
           Export CSV
         </a>
-      </div>
-
-      <div className="card mb-7 flex flex-wrap items-center gap-3 p-4">
+      }
+    >
+      <div className="card mb-6 flex flex-wrap items-center gap-3 p-4">
         <div className="flex items-center gap-2">
           <Link href="/dashboard/reports?range=week" className={`btn ${preset === "week" ? "btn-primary" : "btn-secondary"}`}>
             This Week
@@ -120,19 +117,35 @@ export default async function ReportsPage({
             {employeeRows.map((row) => {
               const rate = row.total === 0 ? 0 : Math.round((row.completed / row.total) * 100);
               return (
-                <li key={row.name} className="flex items-center justify-between gap-3 p-4">
-                  <div className="flex items-center gap-3">
+                <li key={row.name} className="flex flex-wrap items-center gap-3 p-4 sm:flex-nowrap">
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
                     <span
                       className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white"
                       style={{ background: "linear-gradient(135deg, var(--primary), var(--accent))" }}
                     >
                       {initials(row.name)}
                     </span>
-                    <p className="font-medium">{row.name}</p>
+                    <p className="truncate font-medium">{row.name}</p>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-[var(--muted)]">
-                    <span>{row.completed}/{row.total} completed</span>
-                    <span className="badge" style={{ background: "var(--surface)", color: "var(--foreground)" }}>
+
+                  <div className="hidden h-1.5 w-40 overflow-hidden rounded-full sm:block" style={{ background: "var(--surface)" }}>
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${rate}%`,
+                        background: "linear-gradient(90deg, var(--primary), var(--accent))",
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex shrink-0 items-center gap-3 text-sm text-[var(--muted)]">
+                    <span className="tabular-nums">
+                      {row.completed}/{row.total} completed
+                    </span>
+                    <span
+                      className="badge tabular-nums"
+                      style={{ background: "var(--surface)", color: "var(--foreground)" }}
+                    >
                       {rate}%
                     </span>
                   </div>
@@ -145,6 +158,6 @@ export default async function ReportsPage({
 
       <h2 className="mb-3 font-medium">Tasks in this period</h2>
       <TaskList tasks={tasks} showAssignee />
-    </main>
+    </PageShell>
   );
 }

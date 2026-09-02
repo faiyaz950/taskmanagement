@@ -6,6 +6,7 @@ import { getDb } from "@/lib/prisma";
 import TaskForm from "@/components/TaskForm";
 import DeleteTaskButton from "@/components/DeleteTaskButton";
 import { formatDateInput } from "@/lib/utils";
+import PageShell from "@/components/PageShell";
 
 export default async function EditTaskPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,14 +26,16 @@ export default async function EditTaskPage({ params }: { params: Promise<{ id: s
   if (!task) notFound();
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
-      <Link href={`/tasks/${task.id}`} className="link-nav mb-4 !px-0 inline-flex w-fit hover:!bg-transparent">
-        <ArrowLeft size={15} /> Back to task
-      </Link>
-
-      <h1 className="mb-1 text-2xl font-semibold tracking-tight">Edit Task</h1>
-      <p className="mb-6 text-sm text-[var(--muted)]">Update the details, assignee, or deadline.</p>
-
+    <PageShell
+      title="Edit Task"
+      description="Update the details, assignee, or deadline."
+      width="narrow"
+      actions={
+        <Link href={`/tasks/${task.id}`} className="btn btn-ghost">
+          <ArrowLeft size={15} /> Back
+        </Link>
+      }
+    >
       <TaskForm
         employees={employees}
         task={{
@@ -55,6 +58,6 @@ export default async function EditTaskPage({ params }: { params: Promise<{ id: s
         </div>
         <DeleteTaskButton taskId={task.id} />
       </div>
-    </main>
+    </PageShell>
   );
 }

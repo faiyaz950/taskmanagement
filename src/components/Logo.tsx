@@ -1,3 +1,7 @@
+"use client";
+
+import { useId } from "react";
+
 /**
  * Sabeel TaskFlow mark: an open progress ring wrapped around a checkmark.
  * The artwork sits on a transparent background — there is no filled tile
@@ -5,6 +9,11 @@
  *
  * `mono` renders the mark in `currentColor` for use on coloured backgrounds
  * (the login panel), otherwise it uses the brand gradient.
+ *
+ * The gradient id comes from `useId()` because several Logos can be on the
+ * page at once (sidebar + mobile header). A shared id would make them all
+ * resolve to the first definition, which is inside a `display:none` element
+ * at some breakpoints — leaving the visible logo unpainted.
  */
 export default function Logo({
   size = 32,
@@ -15,7 +24,8 @@ export default function Logo({
   className?: string;
   mono?: boolean;
 }) {
-  const stroke = mono ? "currentColor" : "url(#sabeel-logo-gradient)";
+  const gradientId = `logo-gradient-${useId()}`;
+  const stroke = mono ? "currentColor" : `url(#${gradientId})`;
 
   return (
     <svg
@@ -30,7 +40,7 @@ export default function Logo({
     >
       {!mono && (
         <defs>
-          <linearGradient id="sabeel-logo-gradient" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <linearGradient id={gradientId} x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
             <stop offset="0" stopColor="var(--primary)" />
             <stop offset="1" stopColor="var(--accent)" />
           </linearGradient>

@@ -247,6 +247,38 @@ body {
     transform: translateX(-50%);
   }
 
+  .side-nav {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: var(--radius-md);
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+  .side-nav:hover {
+    color: var(--foreground);
+    background: var(--surface);
+  }
+  .side-nav.active {
+    color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+  }
+  .side-nav.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 1.15rem;
+    width: 3px;
+    border-radius: 0 999px 999px 0;
+    background: var(--primary);
+    transform: translateY(-50%);
+  }
+
   .card-glass {
     background: color-mix(in srgb, var(--card) 72%, transparent);
     backdrop-filter: blur(16px);

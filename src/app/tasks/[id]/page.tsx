@@ -7,6 +7,7 @@ import { DueBadge, PriorityBadge, StatusBadge } from "@/components/Badges";
 import { formatDate } from "@/lib/utils";
 import StatusControl from "@/components/StatusControl";
 import AddUpdateForm from "@/components/AddUpdateForm";
+import PageShell from "@/components/PageShell";
 
 function initials(name: string) {
   return name
@@ -41,86 +42,99 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
   if (!isAdmin && !isOwner) redirect("/dashboard");
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
-      <Link href="/dashboard" className="link-nav mb-4 !px-0 inline-flex w-fit hover:!bg-transparent">
-        <ArrowLeft size={15} /> Back to Dashboard
-      </Link>
-
-      <div className="card animate-fade-up mb-6 p-6 sm:p-7">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <StatusBadge status={task.status} />
-            <PriorityBadge priority={task.priority} />
-            {task.status !== "COMPLETED" && <DueBadge dueDate={task.dueDate} status={task.status} />}
-          </div>
+    <PageShell
+      title={task.title}
+      description={`Assigned to ${task.assignedTo.name} by ${task.assignedBy.name}`}
+      actions={
+        <>
+          <Link href="/dashboard" className="btn btn-ghost">
+            <ArrowLeft size={15} /> Back
+          </Link>
           {isAdmin && (
-            <Link href={`/tasks/${task.id}/edit`} className="btn btn-secondary !py-1.5 !text-xs">
-              <Pencil size={13} />
+            <Link href={`/tasks/${task.id}/edit`} className="btn btn-secondary">
+              <Pencil size={14} />
               Edit
             </Link>
           )}
+        </>
+      }
+    >
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+        <div className="space-y-6">
+          <div className="card p-6 sm:p-7">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <StatusBadge status={task.status} />
+              <PriorityBadge priority={task.priority} />
+              {task.status !== "COMPLETED" && <DueBadge dueDate={task.dueDate} status={task.status} />}
+            </div>
+            <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-[var(--muted-2)]">
+              Details
+            </h2>
+            <p className="whitespace-pre-wrap text-sm leading-relaxed">{task.description}</p>
+          </div>
+
+          <div className="card p-6 sm:p-7">
+            <h2 className="mb-4 flex items-center gap-2 font-medium">
+              <MessageSquare size={16} className="text-[var(--primary)]" />
+              Updates
+            </h2>
+            <div className="mb-6">
+              <AddUpdateForm taskId={task.id} />
+            </div>
+
+            {task.updates.length === 0 ? (
+              <p className="text-sm text-[var(--muted)]">No updates yet.</p>
+            ) : (
+              <ul className="space-y-5">
+                {task.updates.map((update) => (
+                  <li key={update.id} className="flex gap-3">
+                    <span
+                      className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white"
+                      style={{ background: "linear-gradient(135deg, var(--primary), var(--accent))" }}
+                    >
+                      {initials(update.author.name)}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm leading-relaxed">{update.message}</p>
+                      <p className="mt-1 text-xs text-[var(--muted)]">
+                        {update.author.name} · {formatDate(update.createdAt)}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
-        <h1 className="text-2xl font-semibold tracking-tight">{task.title}</h1>
-        <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-[var(--muted)]">{task.description}</p>
+        <aside className="space-y-6 lg:sticky lg:top-24">
+          <div className="card p-5">
+            <p className="field-label">Update status</p>
+            <StatusControl taskId={task.id} currentStatus={task.status} />
+          </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-4 border-t border-[var(--border)] pt-5 text-sm sm:grid-cols-4">
-          <div>
-            <p className="text-xs text-[var(--muted)]">Assigned to</p>
-            <p className="mt-0.5 font-medium">{task.assignedTo.name}</p>
+          <div className="card divide-y divide-[var(--border)] p-5 text-sm">
+            <div className="pb-3">
+              <p className="text-xs text-[var(--muted)]">Assigned to</p>
+              <p className="mt-0.5 font-medium">{task.assignedTo.name}</p>
+            </div>
+            <div className="py-3">
+              <p className="text-xs text-[var(--muted)]">Assigned by</p>
+              <p className="mt-0.5 font-medium">{task.assignedBy.name}</p>
+            </div>
+            <div className="py-3">
+              <p className="text-xs text-[var(--muted)]">Estimate</p>
+              <p className="mt-0.5 font-medium">
+                {task.estimatedDays} day{task.estimatedDays === 1 ? "" : "s"}
+              </p>
+            </div>
+            <div className="pt-3">
+              <p className="text-xs text-[var(--muted)]">Due date</p>
+              <p className="mt-0.5 font-medium">{formatDate(task.dueDate)}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs text-[var(--muted)]">Assigned by</p>
-            <p className="mt-0.5 font-medium">{task.assignedBy.name}</p>
-          </div>
-          <div>
-            <p className="text-xs text-[var(--muted)]">Estimate</p>
-            <p className="mt-0.5 font-medium">{task.estimatedDays} day{task.estimatedDays === 1 ? "" : "s"}</p>
-          </div>
-          <div>
-            <p className="text-xs text-[var(--muted)]">Due date</p>
-            <p className="mt-0.5 font-medium">{formatDate(task.dueDate)}</p>
-          </div>
-        </div>
-
-        <div className="mt-5 border-t border-[var(--border)] pt-5">
-          <p className="field-label">Update status</p>
-          <StatusControl taskId={task.id} currentStatus={task.status} />
-        </div>
+        </aside>
       </div>
-
-      <div className="card animate-fade-up p-6 sm:p-7">
-        <h2 className="mb-4 flex items-center gap-2 font-medium">
-          <MessageSquare size={16} className="text-[var(--primary)]" />
-          Updates
-        </h2>
-        <div className="mb-6">
-          <AddUpdateForm taskId={task.id} />
-        </div>
-
-        {task.updates.length === 0 ? (
-          <p className="text-sm text-[var(--muted)]">No updates yet.</p>
-        ) : (
-          <ul className="space-y-5">
-            {task.updates.map((update) => (
-              <li key={update.id} className="flex gap-3">
-                <span
-                  className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white"
-                  style={{ background: "linear-gradient(135deg, var(--primary), var(--accent))" }}
-                >
-                  {initials(update.author.name)}
-                </span>
-                <div className="min-w-0">
-                  <p className="text-sm leading-relaxed">{update.message}</p>
-                  <p className="mt-1 text-xs text-[var(--muted)]">
-                    {update.author.name} · {formatDate(update.createdAt)}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </main>
+    </PageShell>
   );
 }

@@ -5,6 +5,7 @@ import { getDb } from "@/lib/prisma";
 import NewEmployeeForm from "@/components/NewEmployeeForm";
 import TaskList from "@/components/TaskList";
 import EmployeeActions from "@/components/EmployeeActions";
+import PageShell from "@/components/PageShell";
 
 function initials(name: string) {
   return name
@@ -30,13 +31,8 @@ export default async function EmployeesPage() {
   });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
-      <h1 className="mb-1 text-2xl font-semibold tracking-tight">Employees</h1>
-      <p className="mb-6 text-sm text-[var(--muted)]">
-        Manage the team members you can assign tasks to.
-      </p>
-
-      <div className="mb-9">
+    <PageShell title="Employees" description="Manage the team members you can assign tasks to.">
+      <div className="mb-8">
         <NewEmployeeForm />
       </div>
 
@@ -77,6 +73,6 @@ export default async function EmployeesPage() {
           ))}
         </div>
       )}
-    </main>
+    </PageShell>
   );
 }

@@ -5,6 +5,7 @@ import { getDb } from "@/lib/prisma";
 import TaskList from "@/components/TaskList";
 import StatCard from "@/components/StatCard";
 import TaskFilters from "@/components/TaskFilters";
+import PageShell from "@/components/PageShell";
 
 const STATUSES = ["PENDING", "IN_PROGRESS", "COMPLETED"];
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH"];
@@ -63,36 +64,23 @@ export default async function DashboardPage({
   };
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
-      <div
-        className="relative mb-7 overflow-hidden rounded-[var(--radius-xl)] p-6 sm:p-8"
-        style={{ background: "linear-gradient(135deg, var(--primary), var(--accent) 130%)" }}
-      >
-        <div className="animate-blob pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
-        <div className="relative flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-[28px]">
-              {isAdmin ? "All Tasks" : `Hi, ${session.user.name?.split(" ")[0]}`}
-            </h1>
-            <p className="mt-1 text-sm text-white/80">
-              {isAdmin
-                ? "Track the tasks assigned to your team and their progress."
-                : "Your assigned tasks and their deadlines."}
-            </p>
-          </div>
-          {isAdmin && (
-            <Link
-              href="/tasks/new"
-              className="btn shrink-0 bg-white text-[var(--primary)] shadow-lg hover:-translate-y-0.5 hover:shadow-xl"
-            >
-              <Plus size={16} />
-              Assign New Task
-            </Link>
-          )}
-        </div>
-      </div>
-
-      <div className="mb-7 grid grid-cols-2 gap-3 sm:grid-cols-5">
+    <PageShell
+      title={isAdmin ? "All Tasks" : `Hi, ${session.user.name?.split(" ")[0]}`}
+      description={
+        isAdmin
+          ? "Track the tasks assigned to your team and their progress."
+          : "Your assigned tasks and their deadlines."
+      }
+      actions={
+        isAdmin && (
+          <Link href="/tasks/new" className="btn btn-primary">
+            <Plus size={16} />
+            Assign New Task
+          </Link>
+        )
+      }
+    >
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <StatCard label="Total" value={stats.total} icon={ListChecks} tone="primary" />
         <StatCard label="Pending" value={stats.pending} icon={Clock3} tone="warning" />
         <StatCard label="In Progress" value={stats.inProgress} icon={Loader} tone="info" />
@@ -106,6 +94,6 @@ export default async function DashboardPage({
       />
 
       <TaskList tasks={tasks} showAssignee={isAdmin} />
-    </main>
+    </PageShell>
   );
 }

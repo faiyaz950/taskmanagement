@@ -27,7 +27,7 @@ export default function LoginPage() {
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 backdrop-blur">
             <Check size={18} strokeWidth={3} />
           </span>
-          <span className="text-lg font-semibold tracking-tight">TaskFlow</span>
+          <span className="text-lg font-semibold tracking-tight">Sabeel TaskFlow</span>
         </div>
 
         <div className="relative max-w-sm">
@@ -51,7 +51,7 @@ export default function LoginPage() {
           </ul>
         </div>
 
-        <p className="relative text-xs text-white/60">© {new Date().getFullYear()} TaskFlow</p>
+        <p className="relative text-xs text-white/60">© {new Date().getFullYear()} Sabeel TaskFlow</p>
       </div>
 
       <div className="flex items-center justify-center px-4 py-16">

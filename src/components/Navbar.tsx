@@ -24,7 +24,9 @@ export default async function Navbar() {
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link href="/dashboard" className="flex shrink-0 items-center gap-2.5">
           <Logo size={32} className="logo-mark shadow-[var(--shadow-glow)] rounded-lg" />
-          <span className="text-[15px] font-semibold tracking-tight">TaskFlow</span>
+          <span className="text-[15px] font-semibold tracking-tight">
+            Sabeel <span className="text-[var(--primary)]">TaskFlow</span>
+          </span>
         </Link>
 
         <nav className="flex items-center gap-1">

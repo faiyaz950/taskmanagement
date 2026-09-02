@@ -4,18 +4,54 @@ import { auth } from "@/auth";
 import { getDb } from "@/lib/prisma";
 import TaskList from "@/components/TaskList";
 import StatCard from "@/components/StatCard";
+import TaskFilters from "@/components/TaskFilters";
 
-export default async function DashboardPage() {
+const STATUSES = ["PENDING", "IN_PROGRESS", "COMPLETED"];
+const PRIORITIES = ["LOW", "MEDIUM", "HIGH"];
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; status?: string; priority?: string; assignee?: string }>;
+}) {
   const session = await auth();
   if (!session?.user) return null;
 
   const isAdmin = session.user.role === "ADMIN";
+  const filters = await searchParams;
+  const db = getDb();
 
-  const tasks = await getDb().task.findMany({
-    where: isAdmin ? {} : { assignedToId: session.user.id },
-    include: { assignedTo: { select: { name: true } } },
-    orderBy: { dueDate: "asc" },
-  });
+  const status = STATUSES.includes(filters.status ?? "") ? filters.status : undefined;
+  const priority = PRIORITIES.includes(filters.priority ?? "") ? filters.priority : undefined;
+  const q = filters.q?.trim() || undefined;
+  const assignee = isAdmin ? filters.assignee || undefined : undefined;
+
+  const [tasks, employees] = await Promise.all([
+    db.task.findMany({
+      where: {
+        assignedToId: isAdmin ? assignee : session.user.id,
+        status: status as "PENDING" | "IN_PROGRESS" | "COMPLETED" | undefined,
+        priority: priority as "LOW" | "MEDIUM" | "HIGH" | undefined,
+        ...(q
+          ? {
+              OR: [
+                { title: { contains: q, mode: "insensitive" as const } },
+                { description: { contains: q, mode: "insensitive" as const } },
+              ],
+            }
+          : {}),
+      },
+      include: { assignedTo: { select: { name: true } } },
+      orderBy: { dueDate: "asc" },
+    }),
+    isAdmin
+      ? db.user.findMany({
+          where: { role: "EMPLOYEE" },
+          select: { id: true, name: true },
+          orderBy: { name: "asc" },
+        })
+      : Promise.resolve([]),
+  ]);
 
   const now = new Date();
   const stats = {
@@ -63,6 +99,11 @@ export default async function DashboardPage() {
         <StatCard label="Completed" value={stats.completed} icon={CheckCircle2} tone="success" />
         <StatCard label="Overdue" value={stats.overdue} icon={AlertTriangle} tone="danger" />
       </div>
+
+      <TaskFilters
+        values={{ q, status, priority, assignee }}
+        employees={isAdmin ? employees : undefined}
+      />
 
       <TaskList tasks={tasks} showAssignee={isAdmin} />
     </main>

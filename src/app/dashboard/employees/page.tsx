@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { getDb } from "@/lib/prisma";
 import NewEmployeeForm from "@/components/NewEmployeeForm";
 import TaskList from "@/components/TaskList";
+import EmployeeActions from "@/components/EmployeeActions";
 
 function initials(name: string) {
   return name
@@ -53,7 +54,7 @@ export default async function EmployeesPage() {
         <div className="space-y-8">
           {employees.map((emp) => (
             <div key={emp.id}>
-              <div className="mb-3 flex items-center justify-between">
+              <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <span
                     className="flex h-9 w-9 items-center justify-center rounded-full text-xs font-semibold text-white"
@@ -64,6 +65,7 @@ export default async function EmployeesPage() {
                   <div>
                     <p className="font-medium">{emp.name}</p>
                     <p className="text-xs text-[var(--muted)]">{emp.email}</p>
+                    <EmployeeActions employeeId={emp.id} taskCount={emp.tasksAssignedToMe.length} />
                   </div>
                 </div>
                 <span className="badge" style={{ background: "var(--surface)", color: "var(--muted)" }}>

@@ -1,34 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ListChecks, CheckCircle2, AlertTriangle, TrendingUp } from "lucide-react";
+import { ListChecks, CheckCircle2, AlertTriangle, TrendingUp, Download } from "lucide-react";
 import { auth } from "@/auth";
 import { getDb } from "@/lib/prisma";
 import StatCard from "@/components/StatCard";
 import TaskList from "@/components/TaskList";
-import {
-  getWeekRange,
-  getMonthRange,
-  formatDateInput,
-  formatDateRangeLabel,
-  type DateRange,
-} from "@/lib/utils";
-
-function resolveRange(searchParams: { range?: string; from?: string; to?: string }): {
-  range: DateRange;
-  preset: "week" | "month" | "custom";
-} {
-  if (searchParams.from && searchParams.to) {
-    const from = new Date(`${searchParams.from}T00:00:00`);
-    const to = new Date(`${searchParams.to}T23:59:59.999`);
-    if (!Number.isNaN(from.getTime()) && !Number.isNaN(to.getTime()) && from <= to) {
-      return { range: { from, to }, preset: "custom" };
-    }
-  }
-  if (searchParams.range === "week") {
-    return { range: getWeekRange(), preset: "week" };
-  }
-  return { range: getMonthRange(), preset: "month" };
-}
+import { formatDateInput, formatDateRangeLabel, resolveReportRange } from "@/lib/utils";
 
 function initials(name: string) {
   return name
@@ -48,7 +25,12 @@ export default async function ReportsPage({
   if (!session?.user || session.user.role !== "ADMIN") redirect("/dashboard");
 
   const params = await searchParams;
-  const { range, preset } = resolveRange(params);
+  const { range, preset } = resolveReportRange(params);
+  const exportQuery = new URLSearchParams(
+    preset === "custom"
+      ? { from: formatDateInput(range.from), to: formatDateInput(range.to) }
+      : { range: preset },
+  ).toString();
 
   const tasks = await getDb().task.findMany({
     where: { dueDate: { gte: range.from, lte: range.to } },
@@ -73,11 +55,17 @@ export default async function ReportsPage({
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
-      <div className="mb-7">
-        <h1 className="text-2xl font-semibold tracking-tight">Reports</h1>
-        <p className="mt-1 text-sm text-[var(--muted)]">
-          Task activity for {formatDateRangeLabel(range)}.
-        </p>
+      <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Reports</h1>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            Task activity for {formatDateRangeLabel(range)}.
+          </p>
+        </div>
+        <a href={`/dashboard/reports/export?${exportQuery}`} className="btn btn-secondary">
+          <Download size={15} />
+          Export CSV
+        </a>
       </div>
 
       <div className="card mb-7 flex flex-wrap items-center gap-3 p-4">

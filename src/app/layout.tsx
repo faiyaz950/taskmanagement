@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TaskFlow — Task Management",
-  description: "Company task management — assign, track and update employee tasks.",
+  title: "Sabeel TaskFlow — Task Management",
+  description: "Company task management — assign, track and report on employee tasks.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

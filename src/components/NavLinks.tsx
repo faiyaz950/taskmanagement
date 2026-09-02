@@ -23,9 +23,14 @@ export default function NavLinks({ isAdmin }: { isAdmin: boolean }) {
             link.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(link.href);
           const Icon = link.icon;
           return (
-            <Link key={link.href} href={link.href} className={`link-nav ${isActive ? "active" : ""}`}>
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`link-nav whitespace-nowrap ${isActive ? "active" : ""}`}
+              title={link.label}
+            >
               <Icon size={16} strokeWidth={2} />
-              <span className="hidden sm:inline">{link.label}</span>
+              <span className="hidden lg:inline">{link.label}</span>
             </Link>
           );
         })}

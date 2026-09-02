@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { auth } from "@/auth";
 import { getDb } from "@/lib/prisma";
-import NewTaskForm from "@/components/NewTaskForm";
+import TaskForm from "@/components/TaskForm";
 
 export default async function NewTaskPage() {
   const session = await auth();
@@ -33,7 +33,7 @@ export default async function NewTaskPage() {
           .
         </div>
       ) : (
-        <NewTaskForm employees={employees} />
+        <TaskForm employees={employees} />
       )}
     </main>
   );

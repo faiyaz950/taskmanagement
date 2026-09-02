@@ -8,7 +8,7 @@ export default function Logo({ size = 32, className }: { size?: number; classNam
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       role="img"
-      aria-label="TaskFlow logo"
+      aria-label="Sabeel TaskFlow logo"
     >
       <defs>
         <linearGradient id="logo-gradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">

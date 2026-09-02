@@ -1,17 +1,23 @@
+// Task dates are stored as UTC midnight of the chosen calendar day (a `<input
+// type="date">` value like "2026-09-05" parses as UTC midnight). Everything
+// below therefore works in UTC so the calendar day never shifts based on the
+// timezone the app happens to run in.
+
 export function formatDate(date: Date | string) {
   return new Date(date).toLocaleDateString("en-US", {
     day: "2-digit",
     month: "short",
     year: "numeric",
+    timeZone: "UTC",
   });
 }
 
+function utcMidnight(date: Date) {
+  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+}
+
 export function daysRemaining(dueDate: Date | string) {
-  const due = new Date(dueDate);
-  const now = new Date();
-  due.setHours(0, 0, 0, 0);
-  now.setHours(0, 0, 0, 0);
-  const diffMs = due.getTime() - now.getTime();
+  const diffMs = utcMidnight(new Date(dueDate)) - utcMidnight(new Date());
   return Math.round(diffMs / (1000 * 60 * 60 * 24));
 }
 
@@ -38,40 +44,60 @@ export const PRIORITY_LABEL: Record<string, string> = {
 
 export type DateRange = { from: Date; to: Date };
 
-function startOfDay(date: Date) {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  return d;
+function startOfUtcDay(date: Date) {
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }
 
-function endOfDay(date: Date) {
-  const d = new Date(date);
-  d.setHours(23, 59, 59, 999);
-  return d;
+function endOfUtcDay(date: Date) {
+  return new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 23, 59, 59, 999),
+  );
 }
 
 export function getWeekRange(reference: Date = new Date()): DateRange {
-  const day = reference.getDay();
+  const day = reference.getUTCDay();
   const diffToMonday = day === 0 ? -6 : 1 - day;
   const monday = new Date(reference);
-  monday.setDate(reference.getDate() + diffToMonday);
+  monday.setUTCDate(reference.getUTCDate() + diffToMonday);
   const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-  return { from: startOfDay(monday), to: endOfDay(sunday) };
+  sunday.setUTCDate(monday.getUTCDate() + 6);
+  return { from: startOfUtcDay(monday), to: endOfUtcDay(sunday) };
 }
 
 export function getMonthRange(reference: Date = new Date()): DateRange {
-  const from = new Date(reference.getFullYear(), reference.getMonth(), 1);
-  const to = new Date(reference.getFullYear(), reference.getMonth() + 1, 0);
-  return { from: startOfDay(from), to: endOfDay(to) };
+  const from = new Date(Date.UTC(reference.getUTCFullYear(), reference.getUTCMonth(), 1));
+  const to = new Date(Date.UTC(reference.getUTCFullYear(), reference.getUTCMonth() + 1, 0));
+  return { from: startOfUtcDay(from), to: endOfUtcDay(to) };
 }
 
 export function formatDateInput(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
+export function resolveReportRange(params: { range?: string; from?: string; to?: string }): {
+  range: DateRange;
+  preset: "week" | "month" | "custom";
+} {
+  if (params.from && params.to) {
+    const from = new Date(`${params.from}T00:00:00.000Z`);
+    const to = new Date(`${params.to}T23:59:59.999Z`);
+    if (!Number.isNaN(from.getTime()) && !Number.isNaN(to.getTime()) && from <= to) {
+      return { range: { from, to }, preset: "custom" };
+    }
+  }
+  if (params.range === "week") {
+    return { range: getWeekRange(), preset: "week" };
+  }
+  return { range: getMonthRange(), preset: "month" };
+}
+
 export function formatDateRangeLabel(range: DateRange) {
-  const opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "short", year: "numeric" };
+  const opts: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  };
   const fromLabel = range.from.toLocaleDateString("en-US", opts);
   const toLabel = range.to.toLocaleDateString("en-US", opts);
   return `${fromLabel} – ${toLabel}`;

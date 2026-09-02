@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
-import { ArrowLeft, MessageSquare } from "lucide-react";
+import { ArrowLeft, MessageSquare, Pencil } from "lucide-react";
 import { auth } from "@/auth";
 import { getDb } from "@/lib/prisma";
 import { DueBadge, PriorityBadge, StatusBadge } from "@/components/Badges";
@@ -47,10 +47,18 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
       </Link>
 
       <div className="card animate-fade-up mb-6 p-6 sm:p-7">
-        <div className="mb-3 flex flex-wrap items-center gap-2">
-          <StatusBadge status={task.status} />
-          <PriorityBadge priority={task.priority} />
-          {task.status !== "COMPLETED" && <DueBadge dueDate={task.dueDate} status={task.status} />}
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <StatusBadge status={task.status} />
+            <PriorityBadge priority={task.priority} />
+            {task.status !== "COMPLETED" && <DueBadge dueDate={task.dueDate} status={task.status} />}
+          </div>
+          {isAdmin && (
+            <Link href={`/tasks/${task.id}/edit`} className="btn btn-secondary !py-1.5 !text-xs">
+              <Pencil size={13} />
+              Edit
+            </Link>
+          )}
         </div>
 
         <h1 className="text-2xl font-semibold tracking-tight">{task.title}</h1>

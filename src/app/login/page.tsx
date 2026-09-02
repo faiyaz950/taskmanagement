@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { Check, CheckCircle2, ListChecks, Users2 } from "lucide-react";
+import { CheckCircle2, ListChecks, Users2 } from "lucide-react";
 import { loginAction } from "@/lib/actions";
 import Logo from "@/components/Logo";
 
@@ -24,9 +24,7 @@ export default function LoginPage() {
         />
 
         <div className="relative flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 backdrop-blur">
-            <Check size={18} strokeWidth={3} />
-          </span>
+          <Logo size={34} mono />
           <span className="text-lg font-semibold tracking-tight">Sabeel TaskFlow</span>
         </div>
 

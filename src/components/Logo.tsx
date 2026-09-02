@@ -1,26 +1,61 @@
-export default function Logo({ size = 32, className }: { size?: number; className?: string }) {
+/**
+ * Sabeel TaskFlow mark: an open progress ring wrapped around a checkmark.
+ * The artwork sits on a transparent background — there is no filled tile
+ * behind it — so it drops cleanly onto any surface.
+ *
+ * `mono` renders the mark in `currentColor` for use on coloured backgrounds
+ * (the login panel), otherwise it uses the brand gradient.
+ */
+export default function Logo({
+  size = 32,
+  className,
+  mono = false,
+}: {
+  size?: number;
+  className?: string;
+  mono?: boolean;
+}) {
+  const stroke = mono ? "currentColor" : "url(#sabeel-logo-gradient)";
+
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 32 32"
+      viewBox="0 0 40 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       role="img"
       aria-label="Sabeel TaskFlow logo"
     >
-      <defs>
-        <linearGradient id="logo-gradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="var(--primary)" />
-          <stop offset="1" stopColor="var(--accent)" />
-        </linearGradient>
-      </defs>
-      <rect width="32" height="32" rx="8" fill="url(#logo-gradient)" />
+      {!mono && (
+        <defs>
+          <linearGradient id="sabeel-logo-gradient" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="var(--primary)" />
+            <stop offset="1" stopColor="var(--accent)" />
+          </linearGradient>
+        </defs>
+      )}
+
+      {/* Progress ring, left open where the checkmark points so the mark reads
+          as work flowing out to "done". r=15 -> circumference 94.25; the dash
+          pair leaves an 80deg gap, rotated to sit at the upper right. */}
+      <circle
+        cx="20"
+        cy="20"
+        r="15"
+        stroke={stroke}
+        strokeWidth="4.5"
+        strokeLinecap="round"
+        strokeDasharray="73.3 20.95"
+        transform="rotate(2.5 20 20)"
+      />
+
+      {/* checkmark */}
       <path
-        d="M9 16.8L13.6 21.4L23 10.6"
-        stroke="white"
-        strokeWidth="3"
+        d="M13.2 20.4L17.6 24.8L27 14.6"
+        stroke={stroke}
+        strokeWidth="4"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

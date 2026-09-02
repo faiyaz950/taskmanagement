@@ -23,7 +23,7 @@ export default async function Navbar() {
     <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--card)]/80 backdrop-blur-lg">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link href="/dashboard" className="flex shrink-0 items-center gap-2.5">
-          <Logo size={32} className="logo-mark shadow-[var(--shadow-glow)] rounded-lg" />
+          <Logo size={30} className="logo-mark" />
           <span className="text-[15px] font-semibold tracking-tight">
             Sabeel <span className="text-[var(--primary)]">TaskFlow</span>
           </span>

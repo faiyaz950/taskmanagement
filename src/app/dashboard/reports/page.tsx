@@ -41,7 +41,7 @@ export default async function ReportsPage({
   const tasks = await getDb().task.findMany({
     where: reportPeriodFilter(range),
     include: { assignedTo: { select: { id: true, name: true } } },
-    orderBy: { dueDate: "asc" },
+    orderBy: [{ status: "desc" }, { dueDate: "asc" }],
   });
 
   const now = new Date();

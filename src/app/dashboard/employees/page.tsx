@@ -24,7 +24,7 @@ export default async function EmployeesPage() {
     where: { role: "EMPLOYEE" },
     include: {
       tasksAssignedToMe: {
-        orderBy: { dueDate: "asc" },
+        orderBy: [{ status: "desc" }, { dueDate: "asc" }],
       },
     },
     orderBy: { createdAt: "desc" },

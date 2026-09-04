@@ -43,7 +43,8 @@ export default async function DashboardPage({
           : {}),
       },
       include: { assignedTo: { select: { name: true } } },
-      orderBy: { dueDate: "asc" },
+      // Completed work sits at the top, then the rest by how soon it is due.
+      orderBy: [{ status: "desc" }, { dueDate: "asc" }],
     }),
     isAdmin
       ? db.user.findMany({

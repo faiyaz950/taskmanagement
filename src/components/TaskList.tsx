@@ -19,6 +19,11 @@ const PRIORITY_ACCENT: Record<string, string> = {
   HIGH: "var(--danger)",
 };
 
+/** Finished work reads as green; anything still open is coloured by priority. */
+function accentColor(task: { status: string; priority: string }) {
+  return task.status === "COMPLETED" ? "var(--success)" : PRIORITY_ACCENT[task.priority];
+}
+
 function initials(name: string) {
   return name
     .split(" ")
@@ -76,7 +81,7 @@ export default function TaskList({
               href={`/tasks/${task.id}`}
               className="card card-interactive group flex flex-col gap-3 overflow-hidden p-4 lg:grid lg:items-center lg:gap-4"
               style={{
-                borderLeft: `3px solid ${PRIORITY_ACCENT[task.priority]}`,
+                borderLeft: `3px solid ${accentColor(task)}`,
                 gridTemplateColumns: columns,
               }}
             >

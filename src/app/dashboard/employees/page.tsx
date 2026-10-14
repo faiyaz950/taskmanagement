@@ -6,6 +6,7 @@ import NewEmployeeForm from "@/components/NewEmployeeForm";
 import TaskList from "@/components/TaskList";
 import EmployeeActions from "@/components/EmployeeActions";
 import PageShell from "@/components/PageShell";
+import { sortTasksByStatus } from "@/lib/utils";
 
 function initials(name: string) {
   return name
@@ -20,15 +21,20 @@ export default async function EmployeesPage() {
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") redirect("/dashboard");
 
-  const employees = await getDb().user.findMany({
+  const employeesRaw = await getDb().user.findMany({
     where: { role: "EMPLOYEE" },
     include: {
       tasksAssignedToMe: {
-        orderBy: [{ status: "desc" }, { dueDate: "asc" }],
+        orderBy: [{ dueDate: "asc" }, { createdAt: "desc" }],
       },
     },
     orderBy: { createdAt: "desc" },
   });
+
+  const employees = employeesRaw.map((emp) => ({
+    ...emp,
+    tasksAssignedToMe: sortTasksByStatus(emp.tasksAssignedToMe),
+  }));
 
   return (
     <PageShell title="Employees" description="Manage the team members you can assign tasks to.">

@@ -6,6 +6,7 @@ import TaskList from "@/components/TaskList";
 import StatCard from "@/components/StatCard";
 import TaskFilters from "@/components/TaskFilters";
 import PageShell from "@/components/PageShell";
+import { sortTasksByStatus } from "@/lib/utils";
 
 const STATUSES = ["PENDING", "IN_PROGRESS", "COMPLETED"];
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH"];
@@ -27,7 +28,7 @@ export default async function DashboardPage({
   const q = filters.q?.trim() || undefined;
   const assignee = isAdmin ? filters.assignee || undefined : undefined;
 
-  const [tasks, employees] = await Promise.all([
+  const [tasksRaw, employees] = await Promise.all([
     db.task.findMany({
       where: {
         assignedToId: isAdmin ? assignee : session.user.id,
@@ -43,8 +44,7 @@ export default async function DashboardPage({
           : {}),
       },
       include: { assignedTo: { select: { name: true } } },
-      // Completed work sits at the top, then the rest by how soon it is due.
-      orderBy: [{ status: "desc" }, { dueDate: "asc" }],
+      orderBy: [{ dueDate: "asc" }, { createdAt: "desc" }],
     }),
     isAdmin
       ? db.user.findMany({
@@ -54,6 +54,9 @@ export default async function DashboardPage({
         })
       : Promise.resolve([]),
   ]);
+
+  // Work items ordered: In Progress at top, Pending after In Progress, Completed at bottom
+  const tasks = sortTasksByStatus(tasksRaw);
 
   const now = new Date();
   const stats = {

@@ -5,6 +5,7 @@ import {
   formatDateInput,
   reportPeriodFilter,
   resolveReportRange,
+  sortTasksByStatus,
   STATUS_LABEL,
   PRIORITY_LABEL,
 } from "@/lib/utils";
@@ -27,14 +28,16 @@ export async function GET(request: Request) {
     to: url.searchParams.get("to") ?? undefined,
   });
 
-  const tasks = await getDb().task.findMany({
+  const tasksRaw = await getDb().task.findMany({
     where: reportPeriodFilter(range),
     include: {
       assignedTo: { select: { name: true, email: true } },
       assignedBy: { select: { name: true } },
     },
-    orderBy: { dueDate: "asc" },
+    orderBy: [{ dueDate: "asc" }, { createdAt: "desc" }],
   });
+
+  const tasks = sortTasksByStatus(tasksRaw);
 
   const header = [
     "Task",

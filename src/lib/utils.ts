@@ -53,6 +53,44 @@ export const STATUS_LABEL: Record<string, string> = {
   COMPLETED: "Completed",
 };
 
+export const STATUS_SORT_ORDER: Record<string, number> = {
+  IN_PROGRESS: 0,
+  PENDING: 1,
+  COMPLETED: 2,
+};
+
+export function sortTasksByStatus<
+  T extends {
+    status: string;
+    dueDate?: Date | string | null;
+    createdAt?: Date | string;
+  },
+>(tasks: T[]): T[] {
+  return [...tasks].sort((a, b) => {
+    const orderA = STATUS_SORT_ORDER[a.status] ?? 99;
+    const orderB = STATUS_SORT_ORDER[b.status] ?? 99;
+    if (orderA !== orderB) return orderA - orderB;
+
+    // Secondary sort: by dueDate ascending
+    if (a.dueDate && b.dueDate) {
+      const timeA = new Date(a.dueDate).getTime();
+      const timeB = new Date(b.dueDate).getTime();
+      if (timeA !== timeB) return timeA - timeB;
+    } else if (a.dueDate && !b.dueDate) {
+      return -1;
+    } else if (!a.dueDate && b.dueDate) {
+      return 1;
+    }
+
+    // Tertiary sort: by createdAt descending if available
+    if (a.createdAt && b.createdAt) {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    }
+
+    return 0;
+  });
+}
+
 export const PRIORITY_LABEL: Record<string, string> = {
   LOW: "Low",
   MEDIUM: "Medium",

@@ -10,6 +10,7 @@ import {
   formatDateRangeLabel,
   reportPeriodFilter,
   resolveReportRange,
+  sortTasksByStatus,
 } from "@/lib/utils";
 import PageShell from "@/components/PageShell";
 
@@ -38,11 +39,12 @@ export default async function ReportsPage({
       : { range: preset },
   ).toString();
 
-  const tasks = await getDb().task.findMany({
+  const tasksRaw = await getDb().task.findMany({
     where: reportPeriodFilter(range),
     include: { assignedTo: { select: { id: true, name: true } } },
-    orderBy: [{ status: "desc" }, { dueDate: "asc" }],
+    orderBy: [{ dueDate: "asc" }, { createdAt: "desc" }],
   });
+  const tasks = sortTasksByStatus(tasksRaw);
 
   const now = new Date();
   const total = tasks.length;

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ClipboardList, ChevronRight } from "lucide-react";
 import { DueBadge, PriorityBadge, StatusBadge } from "@/components/Badges";
-import { durationLabel, formatDate } from "@/lib/utils";
+import { durationLabel, formatDate, sortTasksByStatus } from "@/lib/utils";
 
 type TaskListItem = {
   id: string;
@@ -11,6 +11,7 @@ type TaskListItem = {
   dueDate: Date | null;
   estimatedDays: number;
   assignedTo?: { name: string };
+  createdAt?: Date;
 };
 
 const PRIORITY_ACCENT: Record<string, string> = {
@@ -40,7 +41,9 @@ export default function TaskList({
   tasks: TaskListItem[];
   showAssignee?: boolean;
 }) {
-  if (tasks.length === 0) {
+  const sortedTasks = sortTasksByStatus(tasks);
+
+  if (sortedTasks.length === 0) {
     return (
       <div className="card flex flex-col items-center gap-2 border-dashed p-12 text-center">
         <span
@@ -75,7 +78,7 @@ export default function TaskList({
       </div>
 
       <ul className="flex flex-col gap-2.5">
-        {tasks.map((task, i) => (
+        {sortedTasks.map((task, i) => (
           <li key={task.id} className="animate-fade-up" style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}>
             <Link
               href={`/tasks/${task.id}`}
